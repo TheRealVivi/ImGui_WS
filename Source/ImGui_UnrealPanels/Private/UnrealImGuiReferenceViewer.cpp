@@ -6,6 +6,7 @@
 #include "ImGuiEx.h"
 #include "UnrealImGuiAssetPicker.h"
 #include "UnrealImGuiPropertyDetails.h"
+#include "Misc/StringOutputDevice.h"
 #include "UObject/ReferenceChainSearch.h"
 
 namespace ReferenceChainSearch
@@ -70,7 +71,7 @@ namespace ReferenceChainSearch
 							*InnermostProperty->GetCPPType(),
 							OutermostProperty->GetOwnerClass()->GetPrefixCPP(),
 							*OutermostProperty->GetOwnerClass()->GetName(),
-							*ReferenceInfo->ReferencerName.ToString());
+							*ReferenceInfo->ReferencerName);
 					}
 					else
 					{
@@ -94,7 +95,7 @@ namespace ReferenceChainSearch
 							// Revert to the internal class name if not
 							ClassName = ReferencerObject->GetClassName();
 						}
-						ReferencingPropertyName = FString::Printf(TEXT("UObject* %s::%s"), *ClassName, *ReferenceInfo->ReferencerName.ToString());
+						ReferencingPropertyName = FString::Printf(TEXT("UObject* %s::%s"), *ClassName, *ReferenceInfo->ReferencerName);
 					}
 
 					Out.Logf(InVerbosityForPrint, TEXT("%s-> %s = %s"),
@@ -105,7 +106,7 @@ namespace ReferenceChainSearch
 				else if (ReferenceInfo && ReferenceInfo->Type == FReferenceChainSearch::EReferenceType::AddReferencedObjects)
 				{
 					FString UObjectOrGCObjectName;
-					if (ReferenceInfo->ReferencerName.IsNone())
+					if (ReferenceInfo->ReferencerName.IsEmpty())
 					{
 						UClass* ReferencerClass = Cast<UClass>(ReferencerObject->GetClass()->TryResolveObject());
 						if (ReferencerClass)
@@ -120,7 +121,7 @@ namespace ReferenceChainSearch
 					}
 					else
 					{
-						UObjectOrGCObjectName = ReferenceInfo->ReferencerName.ToString();
+						UObjectOrGCObjectName = ReferenceInfo->ReferencerName;
 					}
 
 					Out.Logf(InVerbosityForPrint, TEXT("%s-> %s::AddReferencedObjects(%s)"),
